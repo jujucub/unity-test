@@ -71,25 +71,35 @@ public class Player : MonoBehaviour
     {
         Rotate();
 
-        if (Input.GetKey(KeyCode.W))
+		var inputStatus = _state.GetInputStatus();
+		if (inputStatus.IsMoveForward)
         {
             MoveForward();
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (inputStatus.IsMoveBackward)
         {
             MoveBackward();
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (inputStatus.IsMoveLeft)
         {
             MoveLeft();
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (inputStatus.IsMoveRight)
         {
             MoveRight();
         }
+
+        if(inputStatus.IsShot)
+        {
+        	Debug.Log("ショット！");
+        }
+
+        _state.Action();
+
+		Debug.Log("State : " + _state.GetStateType());
     }
 
     private void MoveForward()
@@ -119,11 +129,6 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (_accumrateVec == Vector3.zero)
-        {
-            return;
-        }
-
         Vector3 newPos = Rigidbody.position + _accumrateVec;
         Rigidbody.MovePosition(newPos);
         _accumrateVec = Vector3.zero;
@@ -158,9 +163,37 @@ public class Player : MonoBehaviour
         _modelTrans.forward = forward;
     }
 
-    public void ChangeState(State state)
+	public void ChangeState(StateType state)
     {
+    	if(_state != null)
+    	{
+    		_state.Exit();
+    	}
 
+    	switch(state)
+    	{
+		case StateType.Idle:
+    		_state = new StateIdle(this);
+    		break;
+		case StateType.Walk:
+    		_state = new StateWalk(this);
+    		break;
+		case StateType.Run:
+    		_state = new StateRun(this);
+    		break;
+		case StateType.Prostrate:
+    		_state = new StateProstrate(this);
+    		break;
+		case StateType.Sit:
+			_state = new StateSit(this);
+			break;
+		case StateType.Jump:
+			throw new System.NotImplementedException("まだ未実装です : " + state.ToString());
+		default:
+			throw new System.NotImplementedException("想定外のステートです : " + state.ToString());
+    	}
+
+		_state.Enter();
     }
 
 

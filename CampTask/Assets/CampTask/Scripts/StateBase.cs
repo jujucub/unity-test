@@ -6,6 +6,21 @@ public abstract class StateBase : IState
 {
     protected Player _Player;
 
+    public abstract StateType GetStateType();
+
+	public virtual void Enter() 
+	{
+		_Player.ChangeSpeed(0.3f);
+	}
+
+	public virtual void Exit() 
+	{
+	}
+
+	public virtual void Action()
+	{
+	}
+
     public StateBase(Player player)
     {
         _Player = player;

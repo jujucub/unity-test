@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum State
+public enum StateType
 {
-    Default,
+    Idle,
     Walk,
     Run,
     //伏せる
